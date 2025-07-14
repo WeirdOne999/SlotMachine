@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Slot Machine Columns - Independent Spin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: #f0f0f0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      padding-top: 2vh;
+      margin: 0;
+      width: 100vw;
+    }
+
+    .container {
+      display: flex;
+      width: 100vw;
+      height: 75vh;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2vh;
+      margin: 0;
+      background: #f0f0f0;
+      font-family: sans-serif;
+      height: 100%;
+    }
+
+    .column {
+      flex: 1;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .editor {
+      padding: 8px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #ddd;
+      background: #fafafa;
+      height: 60px;
+      overflow-y: auto;
+      outline: none;
+    }
+
+    .reel {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .reel-list {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      transition: transform 0.3s ease-out;
+    }
+
+    .reel-item {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #eee;
+      transition: transform 0.3s;
+      word-break: break-word;
+      padding: 0 5px;
+    }
+
+    .reel-item.selected {
+      height: 100px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #2c3e50;
+      background-color: #dff0ff;
+      border-radius: 10px;
+      padding: 0 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    /* Control panel fixed bottom-right */
+    .control-panel {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 0.9rem;
+      width: 280px;
+      z-index: 1000;
+      user-select: none;
+    }
+
+    .control-panel label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    /* Dual thumb slider container */
+    .range-slider {
+      position: relative;
+      width: 100%;
+      height: 40px;
+      margin-bottom: 15px;
+    }
+
+    /* Hide default inputs */
+    .range-slider input[type=range] {
+      position: absolute;
+      left: 0;
+      top: 15px;
+      width: 100%;
+      pointer-events: none; /* disable default pointer on inputs */
+      -webkit-appearance: none;
+      background: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Enable pointer events only on thumbs */
+    .range-slider input[type=range]::-webkit-slider-thumb {
+      pointer-events: auto;
+      -webkit-appearance: none;
+      height: 24px;
+      width: 24px;
+      background: #333;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -6px;
+      border: 2px solid #666;
+      position: relative;
+      z-index: 2;
+    }
+    .range-slider input[type=range]::-moz-range-thumb {
+      pointer-events: auto;
+      height: 24px;
+      width: 24px;
+      background: #333;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #666;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Track styling */
+    .slider-track {
+      position: absolute;
+      top: 24px;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: #ddd;
+      border-radius: 5px;
+      z-index: 1;
+    }
+
+    /* Highlighted range */
+    .slider-range {
+      position: absolute;
+      top: 24px;
+      height: 8px;
+      background: #6aa3ff;
+      border-radius: 5px;
+      z-index: 1;
+    }
+
+    .labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #333;
+      user-select: none;
+      margin-top: 5px;
+    }
+
+
+.reel-item.highlight-vfx {
+  box-shadow: 0 0 15px #605dff;
+}
+  </style>
+</head>
+<body>
+  <div class="container" id="columns">
+    <!-- 6 editable columns -->
+    <div class="column">
+      <div class="editor" contenteditable="true">Long Name Tester,Very Long Name Tester,Hello</div>
+      <div class="reel"><div class="reel-list"></div></div>
+    </div>
+    <div class="column">
+      <div class="editor" contenteditable="true">Singapore 60th Birthday, Onwards Singapore, Majulah Singapura</div>
+      <div class="reel"><div class="reel-list"></div></div>
+    </div>
+    <div class="column">
+      <div class="editor" contenteditable="true">IGCC, NYP, International</div>
+      <div class="reel"><div class="reel-list"></div></div>
+    </div>
+    <div class="column">
+      <div class="editor" contenteditable="true">Game Concept, Game Jam, Game Development</div>
+      <div class="reel"><div class="reel-list"></div></div>
+    </div>
+    <div class="column">
+      <div class="editor" contenteditable="true">GDT, AGVE, XPID</div>
+      <div class="reel"><div class="reel-list"></div></div>
+    </div>
+    <div class="column">
+      <div class="editor" contenteditable="true">SDM, SBM, SAS</div>
+      <div class="reel"><div class="reel-list"></div></div>
+    </div>
+  </div>
+
+
+
+  <button onclick="spin()">Spin</button>
+
+  <div class="control-panel">
+    <label for="minSpeed">Spin Speed Range (Min - Max)</label>
+    <div class="range-slider">
+      <input type="range" id="minSpeed" min="1" max="20" value="5" step="1" />
+      <input type="range" id="maxSpeed" min="1" max="20" value="15" step="1" />
+      <div class="slider-track"></div>
+      <div class="slider-range" id="sliderRange"></div>
+    </div>
+    <div class="labels">
+      <span id="minSpeedLabel">20</span>
+      <span id="maxSpeedLabel">60</span>
+    </div>
+    <label for="decelSlider">Deceleration (0.01 – 0.1)</label>
+<input type="range" id="decelSlider" min="0.01" max="0.1" step="0.01" value="0.01" style="width: 100%; margin-bottom: 10px;">
+<div class="labels">
+  <span id="decelLabel">0.02</span>
+</div>
+  </div>
+
+<script>
+  const minSlider = document.getElementById('minSpeed');
+  const maxSlider = document.getElementById('maxSpeed');
+  const sliderRange = document.getElementById('sliderRange');
+  const minLabel = document.getElementById('minSpeedLabel');
+  const maxLabel = document.getElementById('maxSpeedLabel');
+  const decelSlider = document.getElementById('decelSlider');
+  const decelLabel = document.getElementById('decelLabel');
+  //const spinSound = document.getElementById('spinSound');
+
+  decelSlider.addEventListener('input', () => {
+    decelLabel.textContent = parseFloat(decelSlider.value).toFixed(2);
+  });
+
+  function updateSliderRange() {
+    let minVal = parseInt(minSlider.value);
+    let maxVal = parseInt(maxSlider.value);
+
+    if (minVal > maxVal - 5) {
+      minVal = maxVal - 5;
+      minSlider.value = minVal;
+    }
+    if (maxVal < minVal + 5) {
+      maxVal = minVal + 5;
+      maxSlider.value = maxVal;
+    }
+
+    minLabel.textContent = minVal;
+    maxLabel.textContent = maxVal;
+
+    const percent1 = (minVal - minSlider.min) / (minSlider.max - minSlider.min) * 100;
+    const percent2 = (maxVal - maxSlider.min) / (maxSlider.max - maxSlider.min) * 100;
+
+    sliderRange.style.left = percent1 + '%';
+    sliderRange.style.width = (percent2 - percent1) + '%';
+  }
+
+  minSlider.addEventListener('input', updateSliderRange);
+  maxSlider.addEventListener('input', updateSliderRange);
+  updateSliderRange();
+
+  function spin() {
+    const itemHeight = 50;
+    const speedMin = parseInt(minSlider.value);
+    const speedMax = parseInt(maxSlider.value);
+    const deceleration = parseFloat(decelSlider.value);
+
+    const columns = document.querySelectorAll('.column');
+    let spinningCount = columns.length;
+    //spinSound.currentTime = 0;
+    //spinSound.play();
+
+    columns.forEach((column, columnIndex) => {
+      const editor = column.querySelector('.editor');
+      const reelList = column.querySelector('.reel-list');
+      const reelContainer = column.querySelector('.reel');
+
+      const values = editor.innerText
+        .split(',')
+        .map(v => v.trim())
+        .filter(v => v.length > 0);
+
+      if (values.length === 0) {
+        alert("Please enter some values.");
+        return;
+      }
+
+      reelList.innerHTML = '';
+      const longList = [];
+      for (let i = 0; i < 120; i++) longList.push(...values);
+
+      longList.forEach(val => {
+        const item = document.createElement('div');
+        item.className = 'reel-item';
+        item.textContent = val;
+        reelList.appendChild(item);
+      });
+
+      reelList.querySelectorAll('.reel-item').forEach(i => i.classList.remove('selected'));
+
+      let currentOffset = 0;
+      let speed = speedMin + Math.random() * (speedMax - speedMin);
+      const startTime = Date.now();
+
+      function animate() {
+        currentOffset += speed;
+        reelList.style.transition = 'none';
+        reelList.style.transform = `translateY(-${currentOffset}px)`;
+        speed -= deceleration;
+
+        if (speed <= 0) {
+          const containerHeight = reelContainer.clientHeight;
+          const middlePosition = currentOffset + containerHeight / 2;
+          let middleIndex = Math.floor(middlePosition / itemHeight);
+          middleIndex = Math.max(0, Math.min(longList.length - 1, middleIndex));
+
+          const finalOffset = middleIndex * itemHeight - containerHeight / 2 + itemHeight / 2;
+          reelList.style.transition = 'transform 0.7s ease-out';
+          reelList.style.transform = `translateY(-${finalOffset}px)`;
+
+          setTimeout(() => {
+            reelList.querySelectorAll('.reel-item').forEach(i => i.classList.remove('selected', 'highlight-vfx'));
+            const items = reelList.querySelectorAll('.reel-item');
+            if (items[middleIndex]) {
+              items[middleIndex].classList.add('selected', 'highlight-vfx');
+            }
+
+            spinningCount--;
+            if (spinningCount === 0) {
+              //spinSound.pause();
+            }
+          }, 700);
+          return;
+        }
+
+        const totalHeight = longList.length * itemHeight;
+        if (currentOffset >= totalHeight) {
+          currentOffset = currentOffset % totalHeight;
+        }
+
+        const containerHeight = reelContainer.clientHeight;
+        const middlePosition = currentOffset + containerHeight / 2;
+        let middleIndex = Math.floor(middlePosition / itemHeight);
+        middleIndex = Math.max(0, Math.min(longList.length - 1, middleIndex));
+
+        reelList.querySelectorAll('.reel-item').forEach(i => i.classList.remove('selected'));
+        const items = reelList.querySelectorAll('.reel-item');
+        if (items[middleIndex]) items[middleIndex].classList.add('selected');
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    });
+  }
+</script>
+
+
+<!--<audio id="spinSound" src="spin.wav" preload="auto" loop></audio>-->
+</body>
+</html>
