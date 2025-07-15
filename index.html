@@ -326,9 +326,9 @@
       const reelContainer = column.querySelector('.reel');
 
       const values = editor.innerText
-        .split(',')
-        .map(v => v.trim())
-        .filter(v => v.length > 0);
+      .split(/\r?\n/)
+      .map(v => v.trim())
+      .filter(v => v.length > 0);
 
       if (values.length === 0) {
         alert("Please enter some values.");
