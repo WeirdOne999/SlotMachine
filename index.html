@@ -214,46 +214,172 @@
 .reel-item.highlight-vfx {
   box-shadow: 0 0 15px #605dff;
 }
+
+.history-entry {
+      background: #eef6ff;
+      padding: 6px;
+      margin-bottom: 5px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    #historyContainer {
+  display: flex;
+  height: 75vh;
+  gap: 10px;
+  padding: 0 10px;
+}
+
+#historyContainer .column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-entry {
+  background: #eef6ff;
+  border-radius: 6px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 6px;
+}
+
   </style>
 </head>
 <body>
   <div class="container" id="columns">
+    <div id="historyOverlay" style="
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 75vh;
+  display: flex;
+  pointer-events: none;
+  z-index: 10;
+  padding: 0 10px;
+  box-sizing: border-box;
+">
+</div>
+
     <!-- 6 editable columns -->
     <div class="column">
-      <div class="editor" contenteditable="true">Long Name Tester,Very Long Name Tester,Hello</div>
+      <div class="editor" contenteditable="true">
+        Pornchada WATTANAPHAISAN <br>
+        Haritta CHANTON <br>
+        Nareerat NGAMCHALEAM <br>
+        PeiYun CHEN <br>
+        Tzu-Yi LU <br>
+        Wu Shangting <br>
+        Chih-Chia LIU <br>
+        Chiao-Ting, LAI <br>
+        LEE, SHIH-CHIEH <br>
+        Chutikan TRITHATCHAPORN <br>
+      </div>
       <div class="reel"><div class="reel-list"></div></div>
     </div>
     <div class="column">
-      <div class="editor" contenteditable="true">Singapore 60th Birthday, Onwards Singapore, Majulah Singapura</div>
+      <div class="editor" contenteditable="true">
+        JUNA HWANG <br>
+        MASSON ALISSYA <br>
+        Mo Hyojin <br>
+        Heyin RYU <br>
+        Yihaeri YANG <br>
+        Victor SPECQUE <br>
+        Yeri SIM <br>
+        Seobeen Lee <br>
+        Shao-En HSU <br>
+        Mei-Chen Chen <br>
+      </div>
       <div class="reel"><div class="reel-list"></div></div>
     </div>
     <div class="column">
-      <div class="editor" contenteditable="true">IGCC, NYP, International</div>
+      <div class="editor" contenteditable="true">
+        Ruixuan ZENG <br>
+        SU Yaqi <br>
+        Mingke MA <br>
+        Jingyang SUN <br>
+        ZHANG Shiyu <br>
+        JIERUI JIANG <br>
+        ONG XIANG YING <br>
+        Yanwei Shi <br>
+        Chaninya WATCHAPORN <br>
+        XUKE <br>
+      </div>
       <div class="reel"><div class="reel-list"></div></div>
     </div>
     <div class="column">
-      <div class="editor" contenteditable="true">Game Concept, Game Jam, Game Development</div>
+      <div class="editor" contenteditable="true">
+        CHANG, CHEN-HAO <br>
+        Jingdong LIU <br>
+        Yangxiang CHEN <br>
+        TSUNEFUJI AKIFUMI <br>
+        BAN HARUTO <br>
+        YAMAJI YUINA <br>
+        Yu-Hsun HSIAO <br>
+        Yu-Ting LIN <br>
+        Min-Hui LIN <br>
+        HAROLD TANOTO <br>
+      </div>
       <div class="reel"><div class="reel-list"></div></div>
     </div>
     <div class="column">
-      <div class="editor" contenteditable="true">GDT, AGVE, XPID</div>
+      <div class="editor" contenteditable="true">
+        AMBER TAN SZE MIN <br>
+        DEBORAH LEE BUO LER <br>
+        CINDY NG QIAN HUI <br>
+        CHU JIAMING <br>
+        EDWIN LEE JUN LIN <br>
+        RAYYAN PUTRA ZALMAN <br>
+        MARCUS ANG SHING YEW <br>
+        COURTNEY TAN ZHI XUAN <br>
+        AQIL DANIAL BIN ABDUL MALIK <br>
+        JAYDON LEE ENJIE <br>
+      </div>
       <div class="reel"><div class="reel-list"></div></div>
     </div>
     <div class="column">
-      <div class="editor" contenteditable="true">SDM, SBM, SAS</div>
+      <div class="editor" contenteditable="true">
+        SHELBY TEO QI EN <br>
+        JAY JUNE SI <br>
+        AMELIA ANG LE QI <br>
+        ISABELLA FOO <br>
+        LIVIA NEO YI XUAN <br>
+        AUDREYA SUVANTO <br>
+        ARCILLA LORELEI FAITH <br>
+        NG YI QI VOINA <br>
+        SERENE SIM HUI LIN <br>
+        LEA BINTE EDZRA <br>
+      </div>
       <div class="reel"><div class="reel-list"></div></div>
     </div>
   </div>
 
 
 
-  <button onclick="spin()">Spin</button>
+  <button id="spinButton" onclick="spin()">Spin</button>
+<button id="removeButton" onclick="removeSelected()">Remove Selected Names</button>
 
-  <div class="control-panel">
+<div id="historyView" style="display:none;">
+    <h2 style="padding:1dvh 1dvh 1dvh 1dvh">Roll History</h2>
+    <div class="container" id="historyContainer" style="flex-wrap: nowrap;"></div>
+  </div>
+
+  <button id="historyToggleBtn" onclick="toggleHistory()">View History</button>
+
+
+
+  <div class="control-panel" id="control-panel">
     <label for="minSpeed">Spin Speed Range (Min - Max)</label>
     <div class="range-slider">
-      <input type="range" id="minSpeed" min="1" max="20" value="5" step="1" />
-      <input type="range" id="maxSpeed" min="1" max="20" value="15" step="1" />
+      <input type="range" id="minSpeed" min="1" max="20" value="0" step="1" />
+      <input type="range" id="maxSpeed" min="1" max="20" value="6" step="1" />
       <div class="slider-track"></div>
       <div class="slider-range" id="sliderRange"></div>
     </div>
@@ -262,7 +388,7 @@
       <span id="maxSpeedLabel">60</span>
     </div>
     <label for="decelSlider">Deceleration (0.01 – 0.1)</label>
-<input type="range" id="decelSlider" min="0.01" max="0.1" step="0.01" value="0.01" style="width: 100%; margin-bottom: 10px;">
+<input type="range" id="decelSlider" min="0.01" max="0.1" step="0.01" value="0.1" style="width: 100%; margin-bottom: 10px;">
 <div class="labels">
   <span id="decelLabel">0.02</span>
 </div>
@@ -310,6 +436,7 @@
   updateSliderRange();
 
   function spin() {
+    document.querySelector('button[onclick="spin()"]').disabled = true;
     const itemHeight = 50;
     const speedMin = parseInt(minSlider.value);
     const speedMax = parseInt(maxSlider.value);
@@ -378,6 +505,8 @@
             spinningCount--;
             if (spinningCount === 0) {
               //spinSound.pause();
+              document.querySelector('button[onclick="spin()"]').disabled = false;
+              document.getElementById('removeButton').style.display = 'inline-block';
             }
           }, 700);
           return;
@@ -403,6 +532,136 @@
       animate();
     });
   }
+  
+ function removeSelected() {
+  const columns = document.querySelectorAll('.column');
+  const overlay = document.getElementById('historyOverlay');
+
+  // Create a new row of results
+  const row = document.createElement('div');
+  row.style.display = 'flex';
+  row.style.width = '100%';
+  row.style.position = 'absolute';
+  row.style.top = '0';
+  row.style.animation = 'dropDown 0.5s ease-out forwards';
+  row.style.height = '100%';
+
+  columns.forEach((column, index) => {
+    const editor = column.querySelector('.editor');
+    const selected = column.querySelector('.reel-item.selected');
+
+    let rolledName = selected ? selected.textContent.trim() : '';
+
+    if (rolledName) {
+      let lines = editor.innerHTML.split(/<br\s*\/?>/);
+      lines = lines.map(line => line.trim());
+      editor.innerHTML = lines.filter(line => line !== rolledName).join('<br>\n');
+    }
+
+    const nameTag = document.createElement('div');
+    nameTag.textContent = rolledName || '-';
+    nameTag.style.flex = '1';
+    nameTag.style.display = 'flex';
+    nameTag.style.justifyContent = 'center';
+    nameTag.style.alignItems = 'center';
+    nameTag.style.fontSize = '0.85rem';
+    nameTag.style.fontWeight = 'bold';
+    nameTag.style.color = '#333';
+    nameTag.style.background = 'rgba(255,255,255,0.8)';
+    nameTag.style.borderBottom = '1px solid #ccc';
+    nameTag.style.height = '30px';
+
+    row.appendChild(nameTag);
+  });
+
+  // Push all previous entries down
+  Array.from(overlay.children).forEach(existing => {
+    existing.style.transform = 'translateY(30px)';
+  });
+
+  overlay.prepend(row);
+}
+
+const historyData = [[], [], [], [], [], []];
+
+    function removeSelected() {
+      const columns = document.querySelectorAll('.column');
+      columns.forEach((column, index) => {
+        const editor = column.querySelector('.editor');
+        const selected = column.querySelector('.reel-item.selected');
+        if (selected) {
+          const nameToRemove = selected.textContent.trim();
+          let lines = editor.innerHTML.split(/<br\s*\/?>/).map(line => line.trim());
+          editor.innerHTML = lines.filter(line => line !== nameToRemove).join('<br>\n');
+          historyData[index].unshift(nameToRemove);
+        }
+      });
+    }
+
+function toggleHistory() {
+  const historyView = document.getElementById('historyView');
+  const btn = document.getElementById('historyToggleBtn');
+
+  if (historyView.style.display === 'flow' || historyView.style.display === 'block') {
+    // Currently shown, hide it
+    historyView.style.display = 'none';
+    btn.textContent = 'View History';
+    document.getElementById('control-panel').style.display = 'block';
+    document.getElementById('columns').style.display = 'flex';
+    document.getElementById('removeButton').style.display = 'block';
+    document.getElementById('spinButton').style.display = 'block';
+  } else {
+    // Currently hidden, show it and populate history
+    showHistory();
+    btn.textContent = 'Hide History';
+    document.getElementById('control-panel').style.display = 'none';
+    document.getElementById('columns').style.display = 'none';
+    document.getElementById('removeButton').style.display = 'none';
+    document.getElementById('spinButton').style.display = 'none';
+  }
+}
+
+    function showHistory() {
+  const historyContainer = document.getElementById('historyContainer');
+  historyContainer.innerHTML = '';
+
+  const rowColors = [
+    '#eef6ff', // light blue
+    '#fff4e6', // light orange
+    '#e6ffe6', // light green
+    '#fff0f6', // light pink
+    '#f0f0ff', // lavender
+    '#fffde6', // light yellow
+    '#e6f7ff', // pale blue
+    '#f9e6ff', // light purple
+    '#e6fff9', // mint
+    '#fef0e6'  // peach
+  ];
+
+  historyData.forEach((columnHistory) => {
+    const colDiv = document.createElement('div');
+    colDiv.className = 'column';
+
+    columnHistory.forEach((name, index) => {
+      const entry = document.createElement('div');
+      entry.className = 'history-entry';
+      entry.textContent = name;
+
+      // Apply color by index with wraparound
+      entry.style.background = rowColors[index % rowColors.length];
+
+      colDiv.appendChild(entry);
+    });
+
+    historyContainer.appendChild(colDiv);
+  });
+
+  document.getElementById('historyView').style.display = 'flow';
+}
+    function showMain() {
+      document.getElementById('historyView').style.display = 'none';
+    }
+
 </script>
 
 
