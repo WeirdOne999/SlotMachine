@@ -364,7 +364,7 @@
 
 
   <button id="spinButton" onclick="spin()">Spin</button>
-<button id="removeButton" onclick="removeSelected()">Remove Selected Names</button>
+<button id="removeButton" onclick="removeSelected()" style="display:none;">Remove Selected Names</button>
 
 <div id="historyView" style="display:none;">
     <h2 style="padding:1dvh 1dvh 1dvh 1dvh">Roll History</h2>
@@ -596,6 +596,8 @@ const historyData = [[], [], [], [], [], []];
           historyData[index].unshift(nameToRemove);
         }
       });
+      
+    document.getElementById('removeButton').style.display = 'none';
     }
 
 function toggleHistory() {
