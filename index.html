@@ -49,6 +49,17 @@
       position: relative;
     }
 
+    .columns {
+      flex: 1;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
     .editor {
       padding: 8px;
       font-size: 0.9rem;
@@ -444,6 +455,7 @@
 
     const columns = document.querySelectorAll('.column');
     let spinningCount = columns.length;
+    //console.log("Column length is " + spinningCount);
     //spinSound.currentTime = 0;
     //spinSound.play();
 
@@ -452,10 +464,15 @@
       const reelList = column.querySelector('.reel-list');
       const reelContainer = column.querySelector('.reel');
 
-      const values = editor.innerText
-      .split(/\r?\n/)
-      .map(v => v.trim())
-      .filter(v => v.length > 0);
+      if (editor) {
+  values = editor.innerText
+    .split(/\r?\n/)
+    .map(v => v.trim())
+    .filter(v => v.length > 0);
+    //console.log("Editor found " + columnIndex);
+} else {
+  //console.log("Editor not found " + columnIndex);
+}
 
       if (values.length === 0) {
         alert("Please enter some values.");
@@ -642,7 +659,7 @@ function toggleHistory() {
 
   historyData.forEach((columnHistory) => {
     const colDiv = document.createElement('div');
-    colDiv.className = 'column';
+    colDiv.className = 'columns';
 
     columnHistory.forEach((name, index) => {
       const entry = document.createElement('div');
